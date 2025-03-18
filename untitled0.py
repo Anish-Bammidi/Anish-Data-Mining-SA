@@ -10,8 +10,8 @@ sns.set_theme(style="whitegrid")
 plt.rcParams["figure.figsize"] = (10, 6)
 
 # ====== UPLOAD DATASET ======
-    df = pd.read_csv("uber-eats-deliveries.csv")
-    df = pd.read_csv(filename)
+df = pd.read_csv("uber-eats-deliveries.csv")
+df = pd.read_csv(filename)
 
 # ====== DISPLAY INITIAL DATA OVERVIEW ======
 print("Initial Data Overview:")
