@@ -23,7 +23,7 @@ plt.rcParams["figure.figsize"] = (10, 6)
 # ====== UPLOAD DATASET ======
 # If the file isn't already present in your Colab environment, upload it manually.
 try:
-    df = pd.read_csv("/content/uber-eats-deliveries.csv")
+    df = pd.read_csv("uber-eats-deliveries.csv")
 except FileNotFoundError:
     print("File not found. Please upload the dataset:")
     uploaded = files.upload()  # Manually upload your CSV file here.
