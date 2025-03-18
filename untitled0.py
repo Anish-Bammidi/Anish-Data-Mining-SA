@@ -130,5 +130,3 @@ sns.heatmap(numeric_features.corr(), annot=True, cmap='coolwarm', fmt=".2f")
 plt.title("Correlation Heatmap of Numeric Features")
 plt.show()
 
-from google.colab import drive
-drive.mount('/content/drive')
