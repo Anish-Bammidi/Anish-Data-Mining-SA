@@ -1,9 +1,9 @@
 # Uber Eats Delivery Data Analysis
 
-**Project by:** [Your Name]  
+**Project by:** Anish Bammdi  
 **CRS:** Artificial Intelligence  
 **Course:** Data Mining  
-**School:** [Your School Name]
+**School:** Birla Open Minds
 
 ---
 
