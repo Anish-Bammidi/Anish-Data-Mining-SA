@@ -98,12 +98,6 @@ The analysis is deployed on a Streamlit dashboard, allowing users to:
 
 ---
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
 ## Contact
 
-For any questions or feedback, please contact [Your Name] at [your.email@example.com].
+For any questions or feedback, please contact Anish Bammidi at anish.bammidi@gmail.com
