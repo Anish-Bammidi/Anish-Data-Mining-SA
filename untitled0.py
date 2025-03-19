@@ -177,19 +177,19 @@ plt.show()
 # ------------------------------
 
 # Select categorical columns for association rules.
-cols_for_assoc = ['Weatherconditions', 'Road_traffic_density', 'Festival', 'Type_of_order', 'Type_of_vehicle', 'City']
-df_assoc = df[cols_for_assoc].copy()
+#cols_for_assoc = ['Weatherconditions', 'Road_traffic_density', 'Festival', 'Type_of_order', 'Type_of_vehicle', 'City']
+#df_assoc = df[cols_for_assoc].copy()
 
 # One-hot encode the selected columns.
 #df_assoc_encoded = pd.get_dummies(df_assoc, prefix=cols_for_assoc)
 
 # Generate frequent itemsets using Apriori (adjust min_support as needed)
-frequent_itemsets = apriori(df_assoc_encoded, min_support=0.05, use_colnames=True)
+#frequent_itemsets = apriori(df_assoc_encoded, min_support=0.05, use_colnames=True)
 
 # Generate association rules based on a confidence threshold (adjust as needed)
-rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
-print("\nAssociation Rules (first 5):")
-print(rules.head())
+#rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
+#print("\nAssociation Rules (first 5):")
+#print(rules.head())
 
 # ------------------------------
 # 6. User Behavior Analysis
