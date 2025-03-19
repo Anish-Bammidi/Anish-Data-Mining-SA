@@ -17,8 +17,8 @@ plt.rcParams["figure.figsize"] = (10, 6)
 
 # ====== LOAD DATASET ======
 # Make sure 'uber_eats_data.csv' is in your working directory.
-df = pd.read_csv("uber_eats_data.csv")
-
+file_path = "uber-eats-deliveries.csv"
+df = pd.read_csv(file_path)
 # ------------------------------
 # 2. Data Preprocessing
 # ------------------------------
