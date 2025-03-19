@@ -80,7 +80,7 @@ The analysis is deployed on a Streamlit dashboard, allowing users to:
 - Interact with the clustering results and association rules to derive actionable insights.
 
 **Live Streamlit App Link:**  
-[Insert Live App URL here]
+[https://anish-data-mining-sa-nrocdaezcwoxs7gwjcls2q.streamlit.app/]
 
 ---
 
