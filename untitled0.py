@@ -54,7 +54,7 @@ for col in existing_cat_cols:
     df[col] = encoder.fit_transform(df[col])
 
 # Sidebar options for different sections
-analysis_type = st.sidebar.selectbox("Select Analysis Type", ["EDA", "Association Rules & User Behaviour", "K-Means Clustering"])
+analysis_type = st.sidebar.selectbox("Select Analysis Type", ["EDA", "Association Rules", "User Behaviour", "K-Means Clustering"])
 
 if analysis_type == "EDA":
     # ====== EXPLORATORY DATA ANALYSIS (EDA) ======
@@ -79,8 +79,8 @@ if analysis_type == "EDA":
     elif plot_option == "Correlation Heatmap":
         plot_correlation_heatmap()
 
-elif analysis_type == "Association Rules & User Behaviour":
-    st.subheader("Association Rules & User Behaviour Analysis")
+elif analysis_type == "Association Rules":
+    st.subheader("Association Rules Analysis")
     
     # Convert dataset into transactional format for Apriori
     df_apriori = df[['Type_of_order', 'Type_of_vehicle', 'Weatherconditions']]
@@ -91,6 +91,9 @@ elif analysis_type == "Association Rules & User Behaviour":
     rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
     st.write("Frequent Itemsets:", frequent_itemsets)
     st.write("Association Rules:", rules)
+
+elif analysis_type == "User Behaviour":
+    st.subheader("User Behaviour Analysis")
     
     # User Behaviour Analysis: Preferred Order Time
     fig, ax = plt.subplots()
