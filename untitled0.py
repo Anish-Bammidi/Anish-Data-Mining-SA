@@ -87,7 +87,7 @@ elif analysis_type == "Association Rules":
     df_apriori = pd.get_dummies(df_apriori)
     
     # Apply Apriori algorithm
-    frequent_itemsets = apriori(df_apriori, min_support=0.05, use_colnames=True)
+    frequent_itemsets = apriori(df_apriori, min_support=0.01, use_colnames=True)
     rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
     st.write("Frequent Itemsets:", frequent_itemsets)
     st.write("Association Rules:", rules)
