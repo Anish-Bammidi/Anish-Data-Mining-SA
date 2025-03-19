@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import re
 from sklearn.preprocessing import LabelEncoder
+from sklearn.cluster import KMeans
+from mlxtend.frequent_patterns import apriori, association_rules
 
 # Set plot style
 sns.set_theme(style="whitegrid")
@@ -51,81 +53,61 @@ encoder = LabelEncoder()
 for col in existing_cat_cols:
     df[col] = encoder.fit_transform(df[col])
 
-# ====== EXPLORATORY DATA ANALYSIS (EDA) ======
-st.subheader("Exploratory Data Analysis")
+# Sidebar options for different sections
+analysis_type = st.sidebar.selectbox("Select Analysis Type", ["EDA", "Association Rules & User Behaviour", "K-Means Clustering"])
 
-def plot_histogram():
-    fig, ax = plt.subplots()
-    sns.histplot(df["Time_taken(min)"], kde=True, bins=30, ax=ax)
-    ax.set_title("Distribution of Delivery Time (minutes)")
-    ax.set_xlabel("Time Taken (min)")
-    st.pyplot(fig)
-
-def plot_boxplot():
-    fig, ax = plt.subplots()
-    sns.boxplot(y=df["Time_taken(min)"], ax=ax)
-    ax.set_title("Boxplot of Delivery Time (minutes)")
-    st.pyplot(fig)
-
-def plot_weather_vs_time():
-    if "Weatherconditions" in df.columns:
+if analysis_type == "EDA":
+    # ====== EXPLORATORY DATA ANALYSIS (EDA) ======
+    st.subheader("Exploratory Data Analysis")
+    
+    def plot_histogram():
         fig, ax = plt.subplots()
-        sns.boxplot(x="Weatherconditions", y="Time_taken(min)", data=df, ax=ax)
-        ax.set_title("Delivery Time by Weather Conditions")
+        sns.histplot(df["Time_taken(min)"], kde=True, bins=30, ax=ax)
+        ax.set_title("Distribution of Delivery Time (minutes)")
+        ax.set_xlabel("Time Taken (min)")
         st.pyplot(fig)
-
-def plot_traffic_vs_time():
-    if "Road_traffic_density" in df.columns:
+    
+    def plot_correlation_heatmap():
         fig, ax = plt.subplots()
-        sns.boxplot(x="Road_traffic_density", y="Time_taken(min)", data=df, ax=ax)
-        ax.set_title("Delivery Time by Road Traffic Density")
+        sns.heatmap(df.select_dtypes(include=[np.number]).corr(), annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
+        ax.set_title("Correlation Heatmap of Numeric Features")
         st.pyplot(fig)
+    
+    plot_option = st.sidebar.selectbox("Select EDA Analysis", ["Distribution of Delivery Time", "Correlation Heatmap"])
+    if plot_option == "Distribution of Delivery Time":
+        plot_histogram()
+    elif plot_option == "Correlation Heatmap":
+        plot_correlation_heatmap()
 
-def plot_orders_by_city():
-    fig, ax = plt.subplots()
-    sns.countplot(x="City", data=df, order=df["City"].value_counts().index, ax=ax)
-    ax.set_title("Number of Orders by City")
-    plt.xticks(rotation=45)
-    st.pyplot(fig)
-
-def plot_orders_by_hour():
+elif analysis_type == "Association Rules & User Behaviour":
+    st.subheader("Association Rules & User Behaviour Analysis")
+    
+    # Convert dataset into transactional format for Apriori
+    df_apriori = df[['Type_of_order', 'Type_of_vehicle', 'Weatherconditions']]
+    df_apriori = pd.get_dummies(df_apriori)
+    
+    # Apply Apriori algorithm
+    frequent_itemsets = apriori(df_apriori, min_support=0.05, use_colnames=True)
+    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
+    st.write("Frequent Itemsets:", frequent_itemsets)
+    st.write("Association Rules:", rules)
+    
+    # User Behaviour Analysis: Preferred Order Time
     fig, ax = plt.subplots()
     sns.countplot(x="Order_Hour", data=df, ax=ax)
-    ax.set_title("Number of Orders by Hour of Day")
+    ax.set_title("Preferred Order Time of Users")
     st.pyplot(fig)
 
-def plot_delivery_vs_multiple():
+elif analysis_type == "K-Means Clustering":
+    st.subheader("K-Means Clustering Analysis")
+    
+    # Select features for clustering
+    features = df[['Time_taken(min)', 'Order_Hour']].dropna()
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    features['Cluster'] = kmeans.fit_predict(features)
+    
+    # Plot K-Means clusters
     fig, ax = plt.subplots()
-    sns.boxplot(x="multiple_deliveries", y="Time_taken(min)", data=df, ax=ax)
-    ax.set_title("Delivery Time by Number of Deliveries")
+    sns.scatterplot(x=features['Order_Hour'], y=features['Time_taken(min)'], hue=features['Cluster'], palette='viridis', ax=ax)
+    ax.set_title("K-Means Clustering of Delivery Time and Order Hour")
     st.pyplot(fig)
-
-def plot_correlation_heatmap():
-    fig, ax = plt.subplots()
-    sns.heatmap(df.select_dtypes(include=[np.number]).corr(), annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
-    ax.set_title("Correlation Heatmap of Numeric Features")
-    st.pyplot(fig)
-
-# Sidebar options for different plots
-plot_option = st.sidebar.selectbox("Select Analysis", [
-    "Distribution of Delivery Time", "Boxplot of Delivery Time", "Delivery Time vs. Weather Conditions",
-    "Delivery Time vs. Road Traffic Density", "Orders by City", "Orders by Hour", 
-    "Delivery Time vs. Multiple Deliveries", "Correlation Heatmap"
-])
-
-if plot_option == "Distribution of Delivery Time":
-    plot_histogram()
-elif plot_option == "Boxplot of Delivery Time":
-    plot_boxplot()
-elif plot_option == "Delivery Time vs. Weather Conditions":
-    plot_weather_vs_time()
-elif plot_option == "Delivery Time vs. Road Traffic Density":
-    plot_traffic_vs_time()
-elif plot_option == "Orders by City":
-    plot_orders_by_city()
-elif plot_option == "Orders by Hour":
-    plot_orders_by_hour()
-elif plot_option == "Delivery Time vs. Multiple Deliveries":
-    plot_delivery_vs_multiple()
-elif plot_option == "Correlation Heatmap":
-    plot_correlation_heatmap()
