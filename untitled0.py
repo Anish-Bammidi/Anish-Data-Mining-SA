@@ -181,7 +181,7 @@ cols_for_assoc = ['Weatherconditions', 'Road_traffic_density', 'Festival', 'Type
 df_assoc = df[cols_for_assoc].copy()
 
 # One-hot encode the selected columns.
-df_assoc_encoded = pd.get_dummies(df_assoc, prefix=cols_for_assoc)
+#df_assoc_encoded = pd.get_dummies(df_assoc, prefix=cols_for_assoc)
 
 # Generate frequent itemsets using Apriori (adjust min_support as needed)
 frequent_itemsets = apriori(df_assoc_encoded, min_support=0.05, use_colnames=True)
