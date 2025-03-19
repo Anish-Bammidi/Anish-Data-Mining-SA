@@ -1,6 +1,5 @@
-# %% [code]
 # ------------------------------
-# 1. Import Libraries & Upload Data
+# 1. Import Libraries & Load Data
 # ------------------------------
 import pandas as pd
 import numpy as np
@@ -10,26 +9,15 @@ import re
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
-from google.colab import files
-
-# Install mlxtend if needed (uncomment the next line)
-# !pip install mlxtend
-
 from mlxtend.frequent_patterns import apriori, association_rules
 
 # Set plot style
 sns.set_theme(style="whitegrid")
 plt.rcParams["figure.figsize"] = (10, 6)
 
-# ====== UPLOAD DATASET ======
-# Try loading the file; if not found, prompt upload.
-try:
-    df = pd.read_csv("uber_eats_data.csv")
-except FileNotFoundError:
-    print("File not found. Please upload the dataset:")
-    uploaded = files.upload()  # Manually upload your CSV file.
-    filename = list(uploaded.keys())[0]
-    df = pd.read_csv(filename)
+# ====== LOAD DATASET ======
+# Make sure 'uber_eats_data.csv' is in your working directory.
+df = pd.read_csv("uber_eats_data.csv")
 
 # ------------------------------
 # 2. Data Preprocessing
@@ -41,11 +29,12 @@ print(df.info())
 print(df.head())
 
 # Handle missing values:
+# For numerical columns, fill missing values with the median; for categorical, use "Unknown"
 num_cols = df.select_dtypes(include=[np.number]).columns
 df[num_cols] = df[num_cols].fillna(df[num_cols].median())
 df = df.fillna("Unknown")
 
-# Drop duplicates
+# Drop duplicate rows
 df.drop_duplicates(inplace=True)
 
 # Preprocess 'Time_taken(min)' column (e.g., "(min) 24" -> 24)
@@ -65,7 +54,7 @@ df["Order_Hour"] = pd.to_datetime(df["Time_Orderd"], format='%H:%M:%S', errors='
 df["Delivery_person_Ratings"] = pd.to_numeric(df["Delivery_person_Ratings"], errors='coerce')
 df["Delivery_person_Age"] = pd.to_numeric(df["Delivery_person_Age"], errors='coerce')
 
-# Encode selected categorical columns (for EDA/plotting purposes)
+# Encode selected categorical columns for plotting purposes
 categorical_cols = ['Weatherconditions', 'Road_traffic_density', 'Type_of_order', 'Type_of_vehicle']
 existing_cat_cols = [col for col in categorical_cols if col in df.columns]
 encoder = LabelEncoder()
@@ -153,8 +142,7 @@ plt.show()
 # 4. K-Means Clustering & PCA Visualization
 # ------------------------------
 
-# For clustering, select features likely to impact delivery time.
-# We'll use: Time_taken(min), Delivery_person_Ratings, Order_Hour, and Vehicle_condition.
+# Select features for clustering (adjust as needed)
 cluster_features = ["Time_taken(min)", "Delivery_person_Ratings", "Order_Hour", "Vehicle_condition"]
 
 # Drop rows with missing values in these features
@@ -164,7 +152,7 @@ df_cluster = df[cluster_features].dropna()
 scaler_cluster = StandardScaler()
 X_scaled = scaler_cluster.fit_transform(df_cluster)
 
-# Apply K-Means clustering (choose k=4 for example)
+# Apply K-Means clustering (using k=4 as an example)
 kmeans = KMeans(n_clusters=4, random_state=42)
 clusters = kmeans.fit_predict(X_scaled)
 df_cluster["Cluster"] = clusters
@@ -189,7 +177,6 @@ plt.show()
 # ------------------------------
 
 # Select categorical columns for association rules.
-# (Using original categorical columns; if needed, reload them from the original dataset)
 cols_for_assoc = ['Weatherconditions', 'Road_traffic_density', 'Festival', 'Type_of_order', 'Type_of_vehicle', 'City']
 df_assoc = df[cols_for_assoc].copy()
 
@@ -199,9 +186,8 @@ df_assoc_encoded = pd.get_dummies(df_assoc, prefix=cols_for_assoc)
 # Generate frequent itemsets using Apriori (adjust min_support as needed)
 frequent_itemsets = apriori(df_assoc_encoded, min_support=0.05, use_colnames=True)
 
-# Generate association rules based on confidence threshold (adjust as needed)
+# Generate association rules based on a confidence threshold (adjust as needed)
 rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=0.6)
-
 print("\nAssociation Rules (first 5):")
 print(rules.head())
 
