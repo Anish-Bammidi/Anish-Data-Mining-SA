@@ -83,11 +83,13 @@ elif analysis_type == "Association Rules":
     st.subheader("Association Rules Analysis")
     
     # Convert dataset into transactional format for Apriori
-    df_apriori = df[['Type_of_order', 'Type_of_vehicle', 'Weatherconditions']]
-    df_apriori = pd.get_dummies(df_apriori)
+    df_apriori = df[['Type_of_order', 'Type_of_vehicle', 'Weatherconditions']].astype(str)
+    df_apriori = df_apriori.apply(lambda x: x.str.strip())  # Ensure no extra spaces
+    df_apriori = pd.get_dummies(df_apriori)  # Convert categorical data to one-hot encoding
+    df_apriori = df_apriori.astype(bool)  # Ensure the values are boolean (True/False)
     
     # Apply Apriori algorithm
-    frequent_itemsets = apriori(df_apriori, min_support=0.01, use_colnames=True)
+    frequent_itemsets = apriori(df_apriori, min_support=0.05, use_colnames=True)
     rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1.0)
     st.write("Frequent Itemsets:", frequent_itemsets)
     st.write("Association Rules:", rules)
